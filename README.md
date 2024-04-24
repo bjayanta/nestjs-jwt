@@ -43,5 +43,23 @@ npm i -D @types/passport-jwt @types/passport-local
 - Create DTO
 - Create Guard
 - Create Strategy
+- Install ConfigService
+
+```bash
+npm i --save @nestjs/config
+```
+
+- Database
+
+```bash
+npm i @nestjs/typeorm typeorm mysql2
+```
+
+## New Commands
+
+```bash
+# Generate resource
+nest g resource <resource-name>
+```
 
 Thank you.
