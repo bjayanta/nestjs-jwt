@@ -26,8 +26,11 @@ export class User {
   @Column({ default: false })
   is_superadmin: boolean;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: true })
   remember_token: string;
+
+  @Column({ default: false })
+  is_active: boolean;
 
   @CreateDateColumn({
     type: 'timestamp',
