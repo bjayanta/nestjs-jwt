@@ -26,6 +26,12 @@ export class AuthController {
     return req.user;
   }
 
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  logout(@Req() req: Request) {
+    return this.authService.logout(req.user);
+  }
+
   @Post('register')
   async register(@Body(ValidationPipe) user: CreateUserDto) {
     return this.authService.register(user);

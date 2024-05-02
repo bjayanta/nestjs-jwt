@@ -5,11 +5,13 @@ Simple JWT practice.
 ## TODO
 
 - (Done) Register/Sign up
-- Account activation
+- (Done) Account activation
 - (Done) Login/Sign in
+- Logout/Sign out
 - (Done) Forgot password + send email
-- Reset password
-- Remember me
+- (Done) Reset password
+- (Done) Remember me
+- Refresh token
 - Account delete
 
 ## Basic start
@@ -83,7 +85,10 @@ npm install --save @nestjs-modules/mailer nodemailer
 npm install preview-email
 ```
 
-Documentation: [NestJS - Mailer](https://nest-modules.github.io/mailer/docs/mailer)
-Tutorial: [Youtube](https://www.youtube.com/watch?v=DAAxWEPCARo)
+## Doc and tutorials
+
+Logout & Refresh token tutorial: [Dev Influence](https://www.dev-influence.com/article/jwt-authentication-in-nestjs)
+
+Documentation: [NestJS - Mailer](https://nest-modules.github.io/mailer/docs/mailer) and tutorial: [Youtube](https://www.youtube.com/watch?v=DAAxWEPCARo)
 
 Thank you.

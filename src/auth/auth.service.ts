@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthPayloadDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
@@ -27,7 +32,7 @@ export class AuthService {
     private readonly config: ConfigService,
   ) {}
 
-  async validateUser({ username, password }: AuthPayloadDto) {
+  async validateUser({ username, password, remember_me }: AuthPayloadDto) {
     const findUser = await this.usersRepository.findOneBy({ email: username });
 
     if (findUser && findUser.is_active) {
@@ -35,11 +40,24 @@ export class AuthService {
 
       if (isMatch) {
         const { password, ...user } = findUser;
-        return { ...user, token: this.jwtService.sign(user) };
+
+        const token = remember_me
+          ? this.jwtService.sign(user, { expiresIn: '30d' })
+          : this.jwtService.sign(user);
+
+        return { ...user, token: token };
       }
     }
 
-    return null;
+    // Unauthorized error
+    throw new UnauthorizedException({
+      statusCode: HttpStatus.UNAUTHORIZED,
+      error: 'Incorrect username or password.',
+    });
+  }
+
+  async logout(user: any) {
+    return user;
   }
 
   async register(user: CreateUserDto) {

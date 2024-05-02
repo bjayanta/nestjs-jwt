@@ -9,8 +9,12 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  validate(username: string, password: string) {
-    const user = this.authService.validateUser({ username, password });
+  validate(username: string, password: string, remember_me: boolean) {
+    const user = this.authService.validateUser({
+      username,
+      password,
+      remember_me,
+    });
     if (!user) throw new UnauthorizedException();
 
     return user;
