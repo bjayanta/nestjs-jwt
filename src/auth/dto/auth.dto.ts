@@ -1,5 +1,5 @@
 export class AuthPayloadDto {
   username: string;
   password: string;
-  remember_me: boolean;
+  remember_me: boolean | number;
 }

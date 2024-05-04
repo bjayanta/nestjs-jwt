@@ -41,11 +41,21 @@ export class AuthService {
       if (isMatch) {
         const { password, ...user } = findUser;
 
-        const token = remember_me
-          ? this.jwtService.sign(user, { expiresIn: '30d' })
-          : this.jwtService.sign(user);
+        const token =
+          remember_me === 1
+            ? this.jwtService.sign(user, {
+                expiresIn: this.config.get<string>('JWT_EXPIRES'),
+              })
+            : this.jwtService.sign(user);
 
-        return { ...user, token: token };
+        return {
+          ...user,
+          accessToken: token,
+          refreshToken: this.jwtService.sign(user, {
+            secret: this.config.get<string>('JWT_REFRESH_TOKEN_SECRET'),
+            expiresIn: this.config.get<string>('JWT_REFRESH_TOKEN_EXPIRES'),
+          }),
+        };
       }
     }
 
@@ -54,10 +64,6 @@ export class AuthService {
       statusCode: HttpStatus.UNAUTHORIZED,
       error: 'Incorrect username or password.',
     });
-  }
-
-  async logout(user: any) {
-    return user;
   }
 
   async register(user: CreateUserDto) {
@@ -103,6 +109,14 @@ export class AuthService {
     }
 
     return newUser;
+  }
+
+  async refresh_token(payload: any) {
+    const { password, ...user } = await this.usersRepository.findOneBy({
+      email: payload.email,
+    });
+
+    return { accessToken: this.jwtService.sign(user) };
   }
 
   async account_activation(email: string, ticket: string) {

@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { PasswordResetToken } from './entities/password-reset-token';
 import { ConfigService } from '@nestjs/config';
+import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { ConfigService } from '@nestjs/config';
         return {
           secret: config.get<string>('JWT_SECRET'),
           signOptions: {
-            expiresIn: config.get<string | number>('JWT_EXPIRES'),
+            expiresIn: '3600s',
           },
         };
       },
@@ -28,6 +29,12 @@ import { ConfigService } from '@nestjs/config';
     TypeOrmModule.forFeature([User, PasswordResetToken]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    UserService,
+    LocalStrategy,
+    JwtStrategy,
+    RefreshTokenStrategy,
+  ],
 })
 export class AuthModule {}

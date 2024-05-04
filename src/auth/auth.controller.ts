@@ -15,6 +15,7 @@ import { JwtAuthGuard } from './guards/jwt.guard';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { RefreshTokenAuthGuard } from './guards/refreshToken.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -26,15 +27,15 @@ export class AuthController {
     return req.user;
   }
 
-  @Post('logout')
-  @UseGuards(JwtAuthGuard)
-  logout(@Req() req: Request) {
-    return this.authService.logout(req.user);
-  }
-
   @Post('register')
   async register(@Body(ValidationPipe) user: CreateUserDto) {
     return this.authService.register(user);
+  }
+
+  @UseGuards(RefreshTokenAuthGuard)
+  @Post('refresh')
+  async refreshToken(@Req() req: Request) {
+    return this.authService.refresh_token(req.user);
   }
 
   @Get('email-verification')
@@ -49,8 +50,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   status(@Req() req: Request) {
     console.log('Inside AuthController status method');
-    console.log(req.user);
-
     return req.user;
   }
 
@@ -63,6 +62,14 @@ export class AuthController {
 
   @Post('reset-password')
   async resetPassword(
+    @Body(ValidationPipe) resetPasswordDto: ResetPasswordDto,
+  ) {
+    return this.authService.resetPassword(resetPasswordDto);
+  }
+
+  @Post('disable-account')
+  @UseGuards(JwtAuthGuard)
+  async disableAccount(
     @Body(ValidationPipe) resetPasswordDto: ResetPasswordDto,
   ) {
     return this.authService.resetPassword(resetPasswordDto);
