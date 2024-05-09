@@ -13,16 +13,15 @@ Simple JWT practice.
 - (Done) Remember me
 - Update user details
 - (Done) Refresh token
-- Account disable
+- (Done) Account disable
 
 **NB.**
 
 Token:
 
-- Default expire 3600s
-- Access Token: Expire in 1 day.
-- Remember me token will exire in 30 days.
-- Refresh token will expire in 7 days.
+- Default Access Token: Expire in 3600 seconds (1 Hour).
+- Remember me token will exire in 7 days.
+- Refresh token will expire in 30 days.
 
 Logout:
 

@@ -33,25 +33,33 @@ export class AuthService {
   ) {}
 
   async validateUser({ username, password, remember_me }: AuthPayloadDto) {
-    const findUser = await this.usersRepository.findOneBy({ email: username });
+    const user = await this.usersRepository.findOneBy({ email: username });
 
-    if (findUser && findUser.is_active) {
-      const isMatch = await bcrypt.compare(password, findUser.password);
+    if (user && user.is_active) {
+      const isMatch = await bcrypt.compare(password, user.password);
 
       if (isMatch) {
-        const { password, ...user } = findUser;
+        const payload = {
+          username: user.email,
+          attributes: {
+            id: user.id,
+            name: user.name,
+            isSuperadmin: user.is_superadmin,
+            isActive: user.is_active,
+          },
+        };
 
-        const token =
+        const accessToken =
           remember_me === 1
-            ? this.jwtService.sign(user, {
+            ? this.jwtService.sign(payload, {
                 expiresIn: this.config.get<string>('JWT_EXPIRES'),
               })
-            : this.jwtService.sign(user);
+            : this.jwtService.sign(payload);
 
         return {
-          ...user,
-          accessToken: token,
-          refreshToken: this.jwtService.sign(user, {
+          ...payload,
+          accessToken: accessToken,
+          refreshToken: this.jwtService.sign(payload, {
             secret: this.config.get<string>('JWT_REFRESH_TOKEN_SECRET'),
             expiresIn: this.config.get<string>('JWT_REFRESH_TOKEN_EXPIRES'),
           }),
@@ -111,12 +119,38 @@ export class AuthService {
     return newUser;
   }
 
-  async refresh_token(payload: any) {
-    const { password, ...user } = await this.usersRepository.findOneBy({
-      email: payload.email,
-    });
+  async refresh_token(user: any) {
+    const payload = {
+      username: user.email,
+      attributes: {
+        id: user.id,
+        name: user.name,
+        isSuperadmin: user.is_superadmin,
+        isActive: user.is_active,
+      },
+    };
 
-    return { accessToken: this.jwtService.sign(user) };
+    return { accessToken: this.jwtService.sign(payload) };
+  }
+
+  async disable_account(payload: any) {
+    try {
+      await this.entityManager.update(User, payload.attributes.id, {
+        is_active: false,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: "Your account has been disabled. You can't login.",
+      };
+    } catch (error) {
+      console.log(error);
+    }
+
+    return {
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Disable my account process is not complete.',
+    };
   }
 
   async account_activation(email: string, ticket: string) {
@@ -284,9 +318,6 @@ export class AuthService {
         statusCode: HttpStatus.OK,
         message: 'Password has been changed successfully.',
       };
-
-      // Login
-      // return { ...user, token: this.jwtService.sign(user) };
     }
 
     throw new HttpException('Reset details not found.', HttpStatus.NOT_FOUND);

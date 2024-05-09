@@ -69,9 +69,7 @@ export class AuthController {
 
   @Post('disable-account')
   @UseGuards(JwtAuthGuard)
-  async disableAccount(
-    @Body(ValidationPipe) resetPasswordDto: ResetPasswordDto,
-  ) {
-    return this.authService.resetPassword(resetPasswordDto);
+  async disableAccount(@Req() req: Request) {
+    return this.authService.disable_account(req.user);
   }
 }
