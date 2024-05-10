@@ -11,9 +11,9 @@ Simple JWT practice.
 - (Done) Forgot password + send email
 - (Done) Reset password
 - (Done) Remember me
-- Update user details
 - (Done) Refresh token
 - (Done) Account disable
+- (Done) User CRUD
 
 **NB.**
 
@@ -111,6 +111,6 @@ node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
 
 Logout & Refresh token tutorial: [Dev Influence](https://www.dev-influence.com/article/jwt-authentication-in-nestjs)
 
-Documentation: [NestJS - Mailer](https://nest-modules.github.io/mailer/docs/mailer) and tutorial: [Youtube](https://www.youtube.com/watch?v=DAAxWEPCARo)
+Documentation: [NestJS - Mailer](https://nest-modules.github.io/mailer/docs/mailer) and video tutorial: [Youtube](https://www.youtube.com/watch?v=DAAxWEPCARo)
 
 Thank you.
